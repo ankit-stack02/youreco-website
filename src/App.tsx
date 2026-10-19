@@ -59,7 +59,7 @@ export default function App() {
     };
 
     const page = seo[currentPath] ?? seo.home;
-    const url = `https://youreco.online${currentPath === 'home' ? '/' : `/${currentPath}`}`;
+    const url = `https://www.youreco.online${currentPath === 'home' ? '/' : `/${currentPath}`}`;
 
     document.title = page.title;
 
@@ -183,4 +183,5 @@ export default function App() {
     </div>
   );
 }
+
 

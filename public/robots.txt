@@ -1,4 +1,5 @@
 ﻿User-agent: *
 Allow: /
 
-Sitemap: https://youreco.online/sitemap.xml
+Sitemap: https://www.youreco.online/sitemap.xml
+
