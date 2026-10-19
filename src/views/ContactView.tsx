@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { InquiryFormData } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface ContactViewProps {
   initialServiceName?: string;
@@ -17,11 +18,11 @@ export const ContactView: React.FC<ContactViewProps> = ({
     email: '',
     businessName: '',
     websiteType: initialServiceName || 'Website Design & Development',
-    budgetBracket: '$10k – $25k',
+    budgetBracket: '$10k â€“ $25k',
     projectDetails: initialProjectName ? `Inquiring about project similar to: ${initialProjectName}` : ''
   });
 
-  const [selectedTimeline, setSelectedTimeline] = useState<string>('2–3 Months (Standard)');
+  const [selectedTimeline, setSelectedTimeline] = useState<string>('2â€“3 Months (Standard)');
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [submissionCode, setSubmissionCode] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -44,40 +45,66 @@ export const ContactView: React.FC<ContactViewProps> = ({
 
   const budgetOptions = [
     '<$10,000 (Focused Sprint)',
-    '$10k – $25k (Full Flagship)',
-    '$25k – $50k (Platform & CMS)',
+    '$10k â€“ $25k (Full Flagship)',
+    '$25k â€“ $50k (Platform & CMS)',
     '$50k+ (Enterprise System)'
   ];
 
   const timelineOptions = [
     '1 Month (Accelerated)',
-    '2–3 Months (Standard)',
+    '2â€“3 Months (Standard)',
     '4+ Months (Strategic)',
     'Flexible / Planning Phase'
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.fullName.trim() || !formData.email.trim() || !formData.businessName.trim()) {
-      setErrorMsg('Please complete all required fields (Name, Email, and Business Name).');
-      return;
-    }
-    if (!formData.email.includes('@') || !formData.email.includes('.')) {
-      setErrorMsg('Please provide a valid business email address.');
-      return;
+ 
+
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  setIsSubmitting(true);
+  setErrorMsg("");
+
+  try {
+    const response = await fetch("https://formspree.io/f/mljgvvnl", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: formData.fullName,
+        email: formData.email,
+        business: formData.businessName,
+        service: formData.websiteType,
+        budget: formData.budgetBracket,
+        timeline: selectedTimeline,
+        message: formData.projectDetails,
+        _subject: "New YouReco Website Enquiry",
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.errors?.map((error: { message: string }) => error.message).join(", ") ||
+          "Submission failed. Please try again."
+      );
     }
 
-    setErrorMsg('');
-    setIsSubmitting(true);
-
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const generatedCode = 'YR-' + Math.floor(100000 + Math.random() * 900000);
-      setSubmissionCode(generatedCode);
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 600);
-  };
+    setSubmitted(true);
+    setSubmissionCode("YR-" + Date.now().toString().slice(-6));
+  } catch (error) {
+    setErrorMsg(
+      error instanceof Error
+        ? error.message
+        : "Something went wrong. Please try again."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleReset = () => {
     setSubmitted(false);
@@ -87,7 +114,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
       email: '',
       businessName: '',
       websiteType: 'Website Design & Development',
-      budgetBracket: '$10k – $25k',
+      budgetBracket: '$10k â€“ $25k',
       projectDetails: ''
     });
   };
@@ -99,7 +126,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant font-medium">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-            <span>DIRECT INTAKE DESK · 24-HOUR PRINCIPAL RESPONSE GUARANTEE</span>
+            <span>DIRECT INTAKE DESK Â· 24-HOUR PRINCIPAL RESPONSE GUARANTEE</span>
           </div>
           <div className="text-xs font-mono">
             <span>studio@youreco.design</span>
@@ -233,7 +260,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
                     </span>
                     <p className="text-sm text-on-surface leading-relaxed">
                       Monday through Friday<br />
-                      09:00 — 18:00 JST (GMT+9)
+                      09:00 â€” 18:00 JST (GMT+9)
                     </p>
                   </div>
 
@@ -447,3 +474,4 @@ export const ContactView: React.FC<ContactViewProps> = ({
     </div>
   );
 };
+
