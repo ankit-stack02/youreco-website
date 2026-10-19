@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://youreco.online/</loc>
-  </url>
+  <url><loc>https://youreco.online/</loc></url>
+  <url><loc>https://youreco.online/work</loc></url>
+  <url><loc>https://youreco.online/services</loc></url>
+  <url><loc>https://youreco.online/about</loc></url>
+  <url><loc>https://youreco.online/contact</loc></url>
 </urlset>
